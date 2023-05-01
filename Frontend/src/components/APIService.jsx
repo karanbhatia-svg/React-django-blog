@@ -23,7 +23,7 @@ export default class APISerive {
 
     static DeleteArticle(article_id,token){
         return fetch(`http://127.0.0.1:8000/api/articles/${article_id}/`,{
-            method:'PUT',
+            method:'DELETE',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Token ${token}`
@@ -42,6 +42,22 @@ export default class APISerive {
         }).then(resp => resp.json())
     }
 
+    static GetCurrentUser(token) {
+        return fetch(`http://127.0.0.1:8000/api/current_user/`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Token ${token}`
+            }
+        })
+        .then(resp => {
+            if (!resp.ok) {
+                throw new Error(`HTTP error! status: ${resp.status}`);
+            }
+            return resp.json();
+        })
+        .catch(error => console.error(`Error: ${error}`));
+    }
 
 
     static RegisterUser(body){

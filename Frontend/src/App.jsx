@@ -11,6 +11,9 @@ import ArticleList from './components/ArticleList';
 function App() {
 
   const [articles, setArticles] = useState([])
+  const [token, setToken, removeToken] = useCookies(['mytoken'])
+  let navigate = useNavigate()
+
 
   useEffect(() =>{
     fetch('http://127.0.0.1:8000/api/articles/', {
@@ -26,8 +29,57 @@ function App() {
 
   }, [])
 
+  const editBtn = (article) =>{
+    setEditArticle(article)
+  }
 
-  
+  const updatedInformation = (article) => {
+    const new_article = articles.map(myarticle => {
+      if(myarticle.id === article.id){
+        return article
+      }else{
+        return myarticle
+      }
+    })
+    setArticles(new_article)
+  }
+
+  const articleForm = () =>{
+    setEditArticle({title:'', description:''})
+  }
+
+  const insertedInformation = (article) => {
+   const new_articles = [...articles,article]
+   setArticles(new_articles)
+  }
+
+ const deleteBtn = (article) =>{
+    const new_article = articles.filter(myarticle => {
+      if(myarticle.id === article.id){
+        return false
+      }
+
+      return true
+    })
+    setArticles(new_article)
+  }
+
+useEffect(()=> {
+    var user_token = token['mytoken']
+    console.log('User token is',user_token)
+    if(String(user_token) === 'undefined'){
+        navigate('/')
+    }else{
+      navigate('/articles')
+    }
+}, [token])
+
+
+const logoutBtn = () => {
+  removeToken(['mytoken'])
+
+}
+
 
   return (
     <div className="App">
@@ -36,16 +88,15 @@ function App() {
 
    <div className="row">
      <div className="col">
-       <button className="btn btn-primary">Create Post</button>
+       <button className="btn btn-primary" onClick={articleForm}>Create Post</button>
 
      </div>
 
    </div>
 
-    
-    <ArticleList articles={articles} />
+    <ArticleList/>
     <Form />
-    
+
     </div>
   );
 }
